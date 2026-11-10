@@ -1,0 +1,155 @@
+name: APK 5
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.3"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare project from text dump
+        run: |
+          cat > prepare.py <<'PY'
+          import re, os, glob, struct, zlib
+          src = open("ShaveMyMustache_SOURCE_CODE.txt", encoding="utf-8").read()
+          pat = re.compile(r"^#{80}\nFILE: (.+)\n#{80}\n", re.M)
+          ms = list(pat.finditer(src))
+          for i, m in enumerate(ms):
+              end = ms[i + 1].start() if i + 1 < len(ms) else len(src)
+              body = src[m.end():end].strip("\n") + "\n"
+              path = os.path.join("extracted", m.group(1).strip())
+              os.makedirs(os.path.dirname(path), exist_ok=True)
+              with open(path, "w", encoding="utf-8", newline="\n") as f:
+                  f.write(body)
+          print(len(ms), "files extracted")
+
+          proj = "extracted/ShaveMyMustache"
+
+          for p in glob.glob(proj + "/**/*.gd", recursive=True):
+              lines = open(p, encoding="utf-8").read().split("\n")
+              out = []
+              for ln in lines:
+                  s = ln.lstrip(" \t")
+                  lead = ln[:len(ln) - len(s)]
+                  tabs = lead.count("\t") + lead.count(" ") // 4
+                  out.append(("\t" * tabs + s) if s else "")
+              t = "\n".join(out)
+              t = t.replace("class_name GameManager\n", "")
+              t = re.sub(r":\s*GameManager\b", "", t)
+              t = re.sub(r"\s+as GameManager\b", "", t)
+              t = t.replace("GameManager.new()", 'load("res://scripts/GameManager.gd").new()')
+              t = t.replace("btn.theme_override_font_sizes.font_size = 22", 'btn.add_theme_font_size_override("font_size", 22)')
+              open(p, "w", encoding="utf-8", newline="\n").write(t)
+
+          for p in glob.glob(proj + "/**/*.tscn", recursive=True):
+              t = open(p, encoding="utf-8").read()
+              t = re.sub(r' uid="uid://[^"]*"', "", t)
+              open(p, "w", encoding="utf-8", newline="\n").write(t)
+
+          p = proj + "/project.godot"
+          t = open(p, encoding="utf-8").read()
+          t = t.replace('renderer/rendering_method="mobile"', 'renderer/rendering_method="gl_compatibility"')
+          t = t.replace('PackedStringArray("4.3", "Mobile")', 'PackedStringArray("4.3", "GL Compatibility")')
+          open(p, "w", encoding="utf-8", newline="\n").write(t)
+
+          def png(w, h, rgb):
+              raw = b"".join(b"\x00" + bytes(rgb) * w for _ in range(h))
+              def chunk(tag, data):
+                  c = struct.pack(">I", len(data)) + tag + data
+                  return c + struct.pack(">I", zlib.crc32(tag + data) & 0xffffffff)
+              return (b"\x89PNG\r\n\x1a\n"
+                      + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
+                      + chunk(b"IDAT", zlib.compress(raw))
+                      + chunk(b"IEND", b""))
+          os.makedirs(proj + "/assets", exist_ok=True)
+          open(proj + "/assets/icon.png", "wb").write(png(192, 192, (255, 212, 92)))
+          PY
+          python3 prepare.py
+          echo "PROJ=$GITHUB_WORKSPACE/extracted/ShaveMyMustache" >> "$GITHUB_ENV"
+
+      - name: Apply overrides
+        run: |
+          if [ -d overrides ]; then
+            cp -rv overrides/. "$PROJ/"
+          fi
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Check Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls "$ANDROID_HOME/build-tools" || true
+          ls "$ANDROID_HOME/platforms" || true
+
+      - name: Install Godot and templates
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          unzip -q Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
+          sudo mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 /usr/local/bin/godot
+          sudo chmod +x /usr/local/bin/godot
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz -d tpz
+          mv tpz/templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+
+      - name: Debug keystore and editor settings
+        run: |
+          keytool -genkey -v -keystore $HOME/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          mkdir -p ~/.config/godot
+          cat > ~/.config/godot/editor_settings-4.3.tres <<EOF
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "$ANDROID_HOME"
+          export/android/java_sdk_path = "$JAVA_HOME"
+          export/android/debug_keystore = "$HOME/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          EOF
+
+      - name: Create export preset
+        run: |
+          cat > "$PROJ/export_presets.cfg" <<'EOF'
+          [preset.0]
+
+          name="Android"
+          platform="Android"
+          runnable=true
+          export_filter="all_resources"
+          include_filter=""
+          exclude_filter=""
+          export_path=""
+
+          [preset.0.options]
+
+          gradle_build/use_gradle_build=false
+          package/unique_name="com.shavemymustache.game"
+          package/name="Shave My Mustache"
+          package/signed=true
+          version/code=1
+          version/name="1.0"
+          architectures/armeabi-v7a=true
+          architectures/arm64-v8a=true
+          screen/immersive_mode=true
+          EOF
+
+      - name: Import and export APK
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cd "$PROJ"
+          godot --headless --import || true
+          godot --headless --export-debug "Android" "$GITHUB_WORKSPACE/out/ShaveMyMustache.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-apk
+          path: out/ShaveMyMustache.apk
