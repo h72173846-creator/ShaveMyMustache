@@ -1,0 +1,3930 @@
+SHAVE MY MUSTACHE - FULL SOURCE CODE DUMP
+Extracted from ShaveMyMustache_SkinsCoins_v1.zip
+Binary assets (such as assets/icon.png) are not included in this text dump.
+================================================================================
+
+
+################################################################################
+FILE: ShaveMyMustache/ازاي_تعمل_APK.txt
+################################################################################
+
+========================================
+كيف تعمل APK و AAB للعبة
+احلق شنبي لو كسبت! 🥸
+========================================
+
+المتطلبات:
+1. Godot 4.2 أو أحدث (يفضل 4.3)
+2. Android Studio (أو على الأقل Android SDK + Command-line tools)
+3. JDK 17
+
+خطوات بناء الـ APK (للاختبار):
+
+1. افتح المشروع في Godot
+2. روح على قائمة:
+   Project → Export...
+3. اضغط "Add..." واختار Android
+4. في خانة "Debug Keystore":
+   - لو مش عندك، اضغط "Create" وخلق واحد جديد
+5. حط Package Name مثلاً:
+   com.yourname.shavemustache
+6. اضغط "Export Project"
+7. اختار مكان الحفظ واكتب اسم الملف (مثل ShaveMustache.apk)
+8. استنى لما يخلص
+
+خطوات الـ AAB (للرفع على Google Play):
+
+1. نفس الخطوات فوق
+2. بدل ما تختار Export Project، اختار "Export AAB"
+3. الملف الناتج يكون .aab
+4. ارفعه على Google Play Console
+
+ملاحظات مهمة جداً:
+
+- قبل النشر النهائي لازم تعمل Keystore خاص بالـ Release وتحفظه في مكان آمن
+- لازم تعمل أيقونة أصلية (1024x1024) وتضعها في المشروع
+- لازم تضيف صور شاشة (Screenshots) للمتجر
+- سياسة خصوصية: لو اللعبة مش بتجمع بيانات، تقدر تكتب سياسة بسيطة
+
+حجم اللعبة الحالي صغير جداً (ممتاز للأجهزة الضعيفة).
+
+بعد ما تبني الـ APK:
+- انقله على الموبايل وثبته (فعل "مصادر غير معروفة" لو لزم)
+- جرب كل المراحل وتأكد إن الأزرار شغالة كويس
+
+لو واجهت مشكلة في التصدير، ابعتلي رسالة الخطأ بالظبط.
+
+################################################################################
+FILE: ShaveMyMustache/.gitignore
+################################################################################
+
+# Godot 4+ specific ignores
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+*.translation
+
+# Imported assets
+*.import
+
+# Build / Export
+builds/
+android/
+*.apk
+*.aab
+*.ipa
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
+temp/
+tmp/
+
+################################################################################
+FILE: ShaveMyMustache/project.godot
+################################################################################
+
+; Engine configuration file.
+; Generated for "احلق شنبي لو كسبت!"
+
+config_version=5
+
+[application]
+
+config/name="احلق شنبي لو كسبت!"
+config/description="لعبة منصات شديدة الصعوبة تختبر صبرك ومهارتك حتى النهاية!"
+run/main_scene="res://scenes/MainMenu.tscn"
+config/features=PackedStringArray("4.3", "Mobile")
+config/icon="res://assets/icon.png"
+
+[autoload]
+
+GameManager="*res://scripts/GameManager.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/window_width_override=720
+window/size/window_height_override=1280
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[input]
+
+move_left={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":65,"key_label":0,"unicode":97,"location":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194319,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+move_right={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":68,"key_label":0,"unicode":100,"location":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194321,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+jump={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":32,"key_label":0,"unicode":32,"location":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":87,"key_label":0,"unicode":119,"location":0,"echo":false,"script":null)
+]
+}
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[internationalization]
+
+locale/fallback="ar"
+
+[rendering]
+
+renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true
+
+[layer_names]
+
+2d_physics/layer_1="player"
+2d_physics/layer_2="platforms"
+2d_physics/layer_3="hazards"
+2d_physics/layer_4="collectibles"
+
+################################################################################
+FILE: ShaveMyMustache/README.md
+################################################################################
+
+# احلق شنبي لو كسبت! 🥸
+
+لعبة منصات 2D عربية أصلية مبنية بمحرك Godot 4، وأولوية التطوير لنسخة Android.
+
+## محتويات المشروع الحالية
+- 9 ملفات مراحل (Level01 إلى Level09).
+- حركة اللاعب والقفز مع دعم لوحة المفاتيح وأزرار اللمس.
+- شاشة رئيسية واختيار المراحل وحفظ التقدم.
+- فخاخ: منصات مختفية، باب وهمي، سقف ساقط، أسهم مضللة، وجاذبية معكوسة.
+- إعدادات صوت رئيسية تحفظ اختيار اللاعب.
+
+## التشغيل
+1. افتح المشروع باستخدام Godot 4.x.
+2. اختر Import وحدد مجلد `ShaveMyMustache`.
+3. شغّل المشروع بزر F6 أو F5.
+
+## التحكم
+- الكمبيوتر: A/D أو الأسهم للحركة، وSpace أو W للقفز.
+- الموبايل: أزرار يسار ويمين وقفز على الشاشة.
+
+## ملاحظات الاختبار
+تم إصلاح مراجع العقد المفقودة، ومنطقة الجاذبية، ومناطق اللمس، وعدد خانات اختيار المراحل.
+لم يتم تنفيذ تشغيل فعلي للمشروع داخل Godot في بيئة إعداد هذه النسخة؛ لذلك يلزم فتحه في Godot واختباره قبل اعتبار APK/AAB جاهزًا للنشر.
+
+## النشر
+إعداد Android Export في Godot يتطلب قوالب التصدير وAndroid SDK/JDK، ثم إنشاء APK للاختبار أو AAB للنشر على Google Play بعد استيفاء متطلبات المتجر.
+
+
+## متجر السكنات والكوينز - إصدار أولي
+- يحصل اللاعب على 20 كوين عند إنهاء المرحلة.
+- يحصل على 5 كوين إضافية إذا أنهى المرحلة دون موت.
+- الرصيد والسكنات المملوكة والسكن المجهز تُحفظ محليًا.
+- يوجد متجر داخل اللعبة لشراء وتجهيز السكنات.
+- السكنات الحالية شخصيات أصلية مؤقتة: قط أزرق، متحوّل أخضر، نينجا برتقالي، نينجا أزرق.
+- يتغير لون الشخصية داخل اللعب حسب السكن المجهز.
+
+### حقوق الشخصيات المعروفة
+جامبول وبن تن وناروتو وبوروتو شخصيات محمية بحقوق ملكية فكرية. لا تستخدم أسماءها أو تصميماتها الأصلية أو صورها في نسخة منشورة على Google Play إلا بعد الحصول على الترخيص اللازم. السكنات الأصلية المؤقتة هنا بدائل مستقلة وليست تلك الشخصيات.
+
+################################################################################
+FILE: ShaveMyMustache/scenes/Player.tscn
+################################################################################
+
+[gd_scene load_steps=4 format=3 uid="uid://player_scene"]
+
+[ext_resource type="Script" path="res://scripts/Player.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/PlayerVisual.gd" id="2_visual"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(26, 42)
+
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+collision_layer = 1
+collision_mask = 6
+script = ExtResource("1_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -21)
+shape = SubResource("RectangleShape2D_1")
+
+[node name="Visual" type="Node2D" parent="."]
+script = ExtResource("2_visual")
+
+[node name="Shadow" type="ColorRect" parent="Visual"]
+offset_left = -12.0
+offset_top = -4.0
+offset_right = 12.0
+offset_bottom = 2.0
+color = Color(0, 0, 0, 0.25)
+
+[node name="LegL" type="ColorRect" parent="Visual"]
+offset_left = -9.0
+offset_top = -10.0
+offset_right = -2.0
+offset_bottom = 2.0
+color = Color(0.25, 0.28, 0.4, 1)
+
+[node name="LegR" type="ColorRect" parent="Visual"]
+offset_left = 2.0
+offset_top = -10.0
+offset_right = 9.0
+offset_bottom = 2.0
+color = Color(0.25, 0.28, 0.4, 1)
+
+[node name="Body" type="ColorRect" parent="Visual"]
+offset_left = -11.0
+offset_top = -30.0
+offset_right = 11.0
+offset_bottom = -8.0
+color = Color(0.35, 0.55, 0.85, 1)
+
+[node name="Head" type="ColorRect" parent="Visual"]
+offset_left = -12.0
+offset_top = -48.0
+offset_right = 12.0
+offset_bottom = -28.0
+color = Color(0.95, 0.8, 0.65, 1)
+
+[node name="EyeL" type="ColorRect" parent="Visual/Head"]
+offset_left = 3.0
+offset_top = 5.0
+offset_right = 7.0
+offset_bottom = 9.0
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="EyeR" type="ColorRect" parent="Visual/Head"]
+offset_left = 14.0
+offset_top = 5.0
+offset_right = 18.0
+offset_bottom = 9.0
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -50)
+zoom = Vector2(1.15, 1.15)
+position_smoothing_enabled = true
+position_smoothing_speed = 7.0
+
+[node name="DeathParticles" type="GPUParticles2D" parent="."]
+position = Vector2(0, -25)
+emitting = false
+amount = 28
+one_shot = true
+explosiveness = 0.92
+
+
+################################################################################
+FILE: ShaveMyMustache/scenes/Platform.tscn
+################################################################################
+
+[gd_scene load_steps=2 format=3 uid="uid://platform_basic"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat"]
+size = Vector2(160, 22)
+
+[node name="Platform" type="StaticBody2D"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="Top" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -11.0
+offset_right = 80.0
+offset_bottom = -3.0
+color = Color(0.45, 0.55, 0.35, 1)
+
+[node name="Body" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -3.0
+offset_right = 80.0
+offset_bottom = 11.0
+color = Color(0.32, 0.38, 0.28, 1)
+
+[node name="Highlight" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -11.0
+offset_right = 80.0
+offset_bottom = -8.0
+color = Color(0.6, 0.7, 0.45, 0.6)
+
+################################################################################
+FILE: ShaveMyMustache/scenes/SkinShop.tscn
+################################################################################
+
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/SkinShop.gd" id="1"]
+
+[node name="SkinShop" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+################################################################################
+FILE: ShaveMyMustache/scenes/MainMenu.tscn
+################################################################################
+
+[gd_scene load_steps=2 format=3 uid="uid://main_menu"]
+
+[ext_resource type="Script" path="res://scripts/MainMenu.gd" id="1_menu"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.09, 0.14, 1)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 140.0
+offset_bottom = 240.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 46
+text = "احلق شنبي لو كسبت! 🥸"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 250.0
+offset_bottom = 310.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.75, 0.75, 0.8, 1)
+theme_override_font_sizes/font_size = 20
+text = "لو قدرت تخلّص اللعبة...
+أنا هحلق شنبي بنفسي"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -10.0
+offset_right = 150.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "ابدأ التحدي"
+
+[node name="LevelsButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = 90.0
+offset_right = 150.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+text = "اختيار المراحل"
+
+[node name="SettingsButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = 180.0
+offset_right = 150.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+text = "الإعدادات"
+
+[node name="DeathsLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -90.0
+offset_right = 220.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.6, 0.6, 0.65, 1)
+theme_override_font_sizes/font_size = 18
+text = "عدد مرات موتك: 0"
+horizontal_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/scenes/MobileControls.tscn
+################################################################################
+
+[gd_scene load_steps=5 format=3 uid="uid://mobile_controls"]
+
+[sub_resource type="RectangleShape2D" id="TouchLeft"]
+size = Vector2(70, 70)
+
+[sub_resource type="RectangleShape2D" id="TouchRight"]
+size = Vector2(70, 70)
+
+[sub_resource type="RectangleShape2D" id="TouchJump"]
+size = Vector2(70, 70)
+
+[ext_resource type="Script" path="res://scripts/MobileControls.gd" id="1_controls"]
+
+[node name="MobileControls" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_controls")
+
+[node name="Controls" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LeftButton" type="TouchScreenButton" parent="Controls"]
+position = Vector2(40, 1050)
+scale = Vector2(1.8, 1.8)
+shape = SubResource("TouchLeft")
+shape_center = Vector2(35, 35)
+visibility_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="Controls/LeftButton"]
+offset_right = 70.0
+offset_bottom = 70.0
+color = Color(0.2, 0.2, 0.25, 0.6)
+
+[node name="Label" type="Label" parent="Controls/LeftButton"]
+offset_right = 70.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 32
+text = "◀"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightButton" type="TouchScreenButton" parent="Controls"]
+position = Vector2(180, 1050)
+scale = Vector2(1.8, 1.8)
+shape = SubResource("TouchRight")
+shape_center = Vector2(35, 35)
+visibility_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="Controls/RightButton"]
+offset_right = 70.0
+offset_bottom = 70.0
+color = Color(0.2, 0.2, 0.25, 0.6)
+
+[node name="Label" type="Label" parent="Controls/RightButton"]
+offset_right = 70.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 32
+text = "▶"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="JumpButton" type="TouchScreenButton" parent="Controls"]
+position = Vector2(560, 1020)
+scale = Vector2(2.2, 2.2)
+shape = SubResource("TouchJump")
+shape_center = Vector2(35, 35)
+visibility_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="Controls/JumpButton"]
+offset_right = 70.0
+offset_bottom = 70.0
+color = Color(0.25, 0.35, 0.2, 0.65)
+
+[node name="Label" type="Label" parent="Controls/JumpButton"]
+offset_right = 70.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 28
+text = "قفز"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/scenes/LevelSelect.tscn
+################################################################################
+
+[gd_scene load_steps=2 format=3 uid="uid://level_select"]
+
+[ext_resource type="Script" path="res://scripts/LevelSelect.gd" id="1_select"]
+
+[node name="LevelSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_select")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.07, 0.08, 0.12, 1)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 40.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 36
+text = "اختيار المراحل"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 120.0
+offset_right = -30.0
+offset_bottom = -100.0
+
+[node name="GridContainer" type="GridContainer" parent="ScrollContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 16
+columns = 3
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -80.0
+offset_right = 180.0
+offset_bottom = -30.0
+theme_override_font_sizes/font_size = 22
+text = "رجوع"
+
+################################################################################
+FILE: ShaveMyMustache/scripts/MainMenu.gd
+################################################################################
+
+extends Control
+
+@onready var play_button: Button = $PlayButton
+@onready var levels_button: Button = $LevelsButton
+@onready var settings_button: Button = $SettingsButton
+@onready var deaths_label: Label = $DeathsLabel
+
+var game_manager: GameManager
+var settings_popup: PopupPanel
+var volume_slider: HSlider
+var coins_label: Label
+
+func _ready() -> void:
+    game_manager = get_node_or_null("/root/GameManager") as GameManager
+    play_button.pressed.connect(_on_play_pressed)
+    levels_button.pressed.connect(_on_levels_pressed)
+    settings_button.pressed.connect(_on_settings_pressed)
+    _build_settings_popup()
+    _build_shop_entry()
+    _update_deaths()
+    if game_manager:
+        game_manager.coins_changed.connect(_update_coins)
+    _update_coins()
+
+func _update_deaths() -> void:
+    if game_manager and deaths_label:
+        deaths_label.text = "عدد مرات الموت: " + str(game_manager.total_deaths)
+
+func _on_play_pressed() -> void:
+    if game_manager:
+        game_manager.start_level(game_manager.current_level)
+    else:
+        get_tree().change_scene_to_file("res://levels/Level01.tscn")
+
+func _on_levels_pressed() -> void:
+    get_tree().change_scene_to_file("res://scenes/LevelSelect.tscn")
+
+func _on_settings_pressed() -> void:
+    if settings_popup:
+        settings_popup.popup_centered(Vector2i(420, 220))
+
+func _build_settings_popup() -> void:
+    settings_popup = PopupPanel.new()
+    settings_popup.name = "SettingsPopup"
+    add_child(settings_popup)
+    var panel := VBoxContainer.new()
+    panel.custom_minimum_size = Vector2(360, 150)
+    panel.add_theme_constant_override("separation", 14)
+    settings_popup.add_child(panel)
+
+    var heading := Label.new()
+    heading.text = "الإعدادات"
+    heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    heading.add_theme_font_size_override("font_size", 26)
+    panel.add_child(heading)
+
+    var volume_label := Label.new()
+    volume_label.text = "مستوى الصوت"
+    panel.add_child(volume_label)
+
+    volume_slider = HSlider.new()
+    volume_slider.min_value = 0.0
+    volume_slider.max_value = 1.0
+    volume_slider.step = 0.05
+    volume_slider.value = _load_volume()
+    volume_slider.value_changed.connect(_on_volume_changed)
+    panel.add_child(volume_slider)
+
+    var close_button := Button.new()
+    close_button.text = "إغلاق"
+    close_button.pressed.connect(settings_popup.hide)
+    panel.add_child(close_button)
+
+func _load_volume() -> float:
+    var config := ConfigFile.new()
+    if config.load("user://settings.cfg") == OK:
+        return float(config.get_value("audio", "master", 1.0))
+    return 1.0
+
+func _on_volume_changed(value: float) -> void:
+    var bus := AudioServer.get_bus_index("Master")
+    if bus >= 0:
+        AudioServer.set_bus_volume_db(bus, linear_to_db(maxf(value, 0.001)))
+        AudioServer.set_bus_mute(bus, is_zero_approx(value))
+    var config := ConfigFile.new()
+    config.set_value("audio", "master", value)
+    config.save("user://settings.cfg")
+
+func _build_shop_entry() -> void:
+    var shop_button := Button.new()
+    shop_button.text = "متجر السكنات"
+    shop_button.custom_minimum_size = Vector2(300, 58)
+    shop_button.anchor_left = 0.5
+    shop_button.anchor_right = 0.5
+    shop_button.anchor_top = 0.5
+    shop_button.anchor_bottom = 0.5
+    shop_button.offset_left = -150
+    shop_button.offset_right = 150
+    shop_button.offset_top = 255
+    shop_button.offset_bottom = 313
+    add_child(shop_button)
+    shop_button.pressed.connect(func():
+        if game_manager:
+            game_manager.open_shop()
+        else:
+            get_tree().change_scene_to_file("res://scenes/SkinShop.tscn")
+    )
+    coins_label = Label.new()
+    coins_label.anchor_left = 0.5
+    coins_label.anchor_right = 0.5
+    coins_label.anchor_top = 1.0
+    coins_label.anchor_bottom = 1.0
+    coins_label.offset_left = -180
+    coins_label.offset_right = 180
+    coins_label.offset_top = -145
+    coins_label.offset_bottom = -105
+    coins_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    coins_label.add_theme_font_size_override("font_size", 22)
+    coins_label.add_theme_color_override("font_color", Color("#ffd45c"))
+    add_child(coins_label)
+
+func _update_coins(_value = null) -> void:
+    if coins_label and game_manager:
+        coins_label.text = "الكوينز: " + str(game_manager.coins)
+
+################################################################################
+FILE: ShaveMyMustache/scripts/Player.gd
+################################################################################
+
+extends CharacterBody2D
+class_name Player
+
+## شخصية اللاعب - تحكم سلس + شكل 2D بسيط
+
+signal died
+signal reached_goal
+
+@export var speed: float = 210.0
+@export var jump_velocity: float = -430.0
+@export var gravity: float = 1150.0
+@export var max_fall_speed: float = 720.0
+@export var coyote_time: float = 0.06
+@export var jump_buffer_time: float = 0.08
+
+var coyote_timer: float = 0.0
+var jump_buffer_timer: float = 0.0
+var is_dead: bool = false
+var facing_right: bool = true
+var can_move: bool = true
+
+# Mobile input
+var mobile_left: bool = false
+var mobile_right: bool = false
+var mobile_jump: bool = false
+var mobile_jump_was_pressed: bool = false
+var gravity_multiplier: float = 1.0
+
+@onready var visual: Node2D = $Visual
+@onready var collision: CollisionShape2D = $CollisionShape2D
+@onready var death_particles: GPUParticles2D = $DeathParticles
+
+func _ready() -> void:
+	add_to_group("player")
+
+func _physics_process(delta: float) -> void:
+	if is_dead or not can_move:
+		return
+
+	# Gravity supports normal and inverted gravity zones.
+	var gravity_value := gravity * gravity_multiplier
+	up_direction = Vector2.UP if gravity_multiplier >= 0.0 else Vector2.DOWN
+	if not is_on_floor():
+		velocity.y += gravity_value * delta
+		velocity.y = clampf(velocity.y, -max_fall_speed, max_fall_speed)
+		coyote_timer = maxf(0.0, coyote_timer - delta)
+	else:
+		coyote_timer = coyote_time
+
+	# Jump buffer
+	if jump_buffer_timer > 0:
+		jump_buffer_timer -= delta
+
+	# Horizontal movement
+	var direction := 0.0
+	if mobile_left or Input.is_action_pressed("move_left"):
+		direction -= 1.0
+	if mobile_right or Input.is_action_pressed("move_right"):
+		direction += 1.0
+
+	var is_running = false
+	if direction != 0:
+		velocity.x = direction * speed
+		facing_right = direction > 0
+		is_running = true
+		if visual and visual.has_method("set_facing"):
+			visual.set_facing(facing_right)
+	else:
+		velocity.x = move_toward(velocity.x, 0, speed * 9.0 * delta)
+
+	# Jump
+	var mobile_jump_just_pressed := mobile_jump and not mobile_jump_was_pressed
+	mobile_jump_was_pressed = mobile_jump
+	var wants_jump := mobile_jump_just_pressed or Input.is_action_just_pressed("jump")
+	if wants_jump:
+		jump_buffer_timer = jump_buffer_time
+
+	if jump_buffer_timer > 0 and coyote_timer > 0:
+		velocity.y = -jump_velocity if gravity_multiplier < 0.0 else jump_velocity
+		coyote_timer = 0.0
+		jump_buffer_timer = 0.0
+
+	# Update visual state
+	if visual and visual.has_method("set_state"):
+		visual.set_state(is_running and is_on_floor(), not is_on_floor() and velocity.y < 0, not is_on_floor() and velocity.y > 50)
+
+	move_and_slide()
+
+	# Check hazards
+	for i in get_slide_collision_count():
+		var col = get_slide_collision(i)
+		var collider = col.get_collider()
+		if collider and collider.is_in_group("hazard"):
+			die()
+
+func die() -> void:
+	if is_dead:
+		return
+	is_dead = true
+	can_move = false
+	velocity = Vector2.ZERO
+	if death_particles:
+		death_particles.emitting = true
+	if visual:
+		visual.modulate = Color(1, 0.3, 0.3)
+	died.emit()
+
+func reset_state() -> void:
+	is_dead = false
+	can_move = true
+	velocity = Vector2.ZERO
+	coyote_timer = 0.0
+	jump_buffer_timer = 0.0
+	mobile_left = false
+	mobile_right = false
+	mobile_jump = false
+	mobile_jump_was_pressed = false
+	set_gravity_multiplier(1.0)
+	if visual:
+		visual.modulate = Color.WHITE
+
+func set_mobile_input(left: bool, right: bool, jump: bool) -> void:
+	mobile_left = left
+	mobile_right = right
+	mobile_jump = jump
+
+func set_gravity_multiplier(value: float) -> void:
+	gravity_multiplier = value if not is_zero_approx(value) else 1.0
+	if visual:
+		visual.scale.y = -1.0 if gravity_multiplier < 0.0 else 1.0
+
+################################################################################
+FILE: ShaveMyMustache/scripts/LevelBase.gd
+################################################################################
+
+extends Node2D
+class_name LevelBase
+
+## السكريبت الأساسي لكل مرحلة
+
+@export var level_number: int = 1
+@export var level_name: String = "مرحلة بدون اسم"
+
+@onready var player: Player = $Player
+var goal: Area2D
+@onready var ui: CanvasLayer = $UI
+@onready var restart_button: Button = $UI/RestartButton
+@onready var menu_button: Button = $UI/MenuButton
+@onready var win_panel: Panel = $UI/WinPanel
+@onready var lose_panel: Panel = $UI/LosePanel
+
+var game_manager: GameManager
+var is_level_over: bool = false
+
+func _ready() -> void:
+	goal = get_tree().get_first_node_in_group("real_goal") as Area2D
+	game_manager = get_node_or_null("/root/GameManager")
+	if game_manager == null:
+		game_manager = GameManager.new()
+		game_manager.name = "GameManager"
+		get_tree().root.add_child(game_manager)
+	
+	if player:
+		player.died.connect(_on_player_died)
+	
+	if goal:
+		goal.body_entered.connect(_on_goal_entered)
+	
+	if restart_button:
+		restart_button.pressed.connect(_on_restart_pressed)
+	if menu_button:
+		menu_button.pressed.connect(_on_menu_pressed)
+	
+	if win_panel:
+		win_panel.visible = false
+	if lose_panel:
+		lose_panel.visible = false
+	
+	# Mobile controls
+	var mobile = preload("res://scenes/MobileControls.tscn").instantiate()
+	add_child(mobile)
+
+func _on_player_died() -> void:
+	if is_level_over:
+		return
+	is_level_over = true
+	if game_manager:
+		game_manager.on_player_death()
+	
+	if lose_panel:
+		lose_panel.visible = true
+		var msg = lose_panel.get_node_or_null("Message")
+		if msg:
+			var funny_msgs = [
+				"وقعت في الفخ... تاني!",
+				"لسه بدري على الحلاقة",
+				"كل محاولة بتثبت إن الفخ أذكى منك!",
+				"الفخ كسب الجولة دي!",
+				"كملت مرحلة؟ لا؟ تمام كده",
+				"كنت قريب... بس مش كفاية!"
+			]
+			msg.text = funny_msgs[randi() % funny_msgs.size()]
+
+func _on_goal_entered(body: Node2D) -> void:
+	if is_level_over:
+		return
+	if body is Player or body.is_in_group("player"):
+		if goal.is_in_group("real_goal"):
+			is_level_over = true
+			if game_manager:
+				game_manager.complete_level()
+			if win_panel:
+				win_panel.visible = true
+				var msg = win_panel.get_node_or_null("Message")
+				if msg:
+					msg.text = "كسبت المرحلة!\nمش مصدق إنك عديتها! 😅"
+
+func _on_restart_pressed() -> void:
+	if game_manager:
+		game_manager.restart_level()
+	else:
+		get_tree().reload_current_scene()
+
+func _on_menu_pressed() -> void:
+	if game_manager:
+		game_manager.go_to_main_menu()
+	else:
+		get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
+################################################################################
+FILE: ShaveMyMustache/scripts/GameManager.gd
+################################################################################
+
+extends Node
+class_name GameManager
+
+signal level_completed(level_number: int)
+signal player_died
+signal game_started
+signal coins_changed(new_total: int)
+signal skin_changed(skin_id: String)
+
+const SAVE_PATH := "user://progress.save"
+const LEVEL_CLEAR_REWARD := 20
+const CLEAN_CLEAR_BONUS := 5
+
+var current_level: int = 1
+var unlocked_levels: int = 1
+var total_deaths: int = 0
+var level_deaths: int = 0
+var coins: int = 0
+var owned_skins: Array[String] = ["default"]
+var equipped_skin: String = "default"
+
+# شخصيات أصلية مؤقتة؛ الشخصيات المعروفة تحتاج ترخيصًا قبل النشر.
+var skins := {
+    "default": {"name": "المتحدي", "price": 0, "body": Color("#315b91"), "head": Color("#f2c9a5"), "legs": Color("#252b3a"), "description": "الشخصية الأساسية"},
+    "blue_cat": {"name": "قط أزرق مرح", "price": 100, "body": Color("#4aa9d8"), "head": Color("#4aa9d8"), "legs": Color("#244d78"), "description": "شخصية قط كرتونية أصلية"},
+    "green_shifter": {"name": "متحوّل أخضر", "price": 150, "body": Color("#54bd65"), "head": Color("#83db75"), "legs": Color("#287c43"), "description": "بطل فضائي أخضر أصلي"},
+    "orange_ninja": {"name": "نينجا برتقالي", "price": 200, "body": Color("#e87932"), "head": Color("#f0c39b"), "legs": Color("#303b58"), "description": "نينجا أصلي بملابس برتقالية"},
+    "blue_ninja": {"name": "نينجا أزرق", "price": 250, "body": Color("#2879c7"), "head": Color("#edc6a6"), "legs": Color("#172b4d"), "description": "نينجا أصلي بملابس زرقاء"}
+}
+
+var levels_data := {
+    1: {"name": "البداية الخادعة", "scene": "res://levels/Level01.tscn", "difficulty": 1},
+    2: {"name": "الأرض الغدارة", "scene": "res://levels/Level02.tscn", "difficulty": 2},
+    3: {"name": "باب النهاية الهارب", "scene": "res://levels/Level03.tscn", "difficulty": 3},
+    4: {"name": "السقف الغاضب", "scene": "res://levels/Level04.tscn", "difficulty": 4},
+    5: {"name": "الأسهم الكذابة", "scene": "res://levels/Level05.tscn", "difficulty": 5},
+    6: {"name": "الجاذبية المعكوسة", "scene": "res://levels/Level06.tscn", "difficulty": 6},
+    7: {"name": "الخليط المجنون", "scene": "res://levels/Level07.tscn", "difficulty": 7},
+    8: {"name": "لا تثق في شيء", "scene": "res://levels/Level08.tscn", "difficulty": 8},
+    9: {"name": "الفخ الأخير", "scene": "res://levels/Level09.tscn", "difficulty": 9}
+}
+
+func _ready() -> void:
+    load_progress()
+
+func start_level(level_num: int) -> void:
+    if level_num > unlocked_levels:
+        return
+    current_level = level_num
+    level_deaths = 0
+    var scene_path: String = levels_data.get(level_num, {}).get("scene", "")
+    if scene_path != "" and ResourceLoader.exists(scene_path):
+        game_started.emit()
+        get_tree().change_scene_to_file(scene_path)
+    else:
+        push_error("Level scene not found: " + scene_path)
+
+func complete_level() -> void:
+    var reward := LEVEL_CLEAR_REWARD
+    if level_deaths == 0:
+        reward += CLEAN_CLEAR_BONUS
+    add_coins(reward)
+    level_completed.emit(current_level)
+    if current_level >= unlocked_levels and current_level < levels_data.size():
+        unlocked_levels = current_level + 1
+    current_level = mini(current_level + 1, levels_data.size())
+    save_progress()
+
+func on_player_death() -> void:
+    total_deaths += 1
+    level_deaths += 1
+    player_died.emit()
+    save_progress()
+
+func add_coins(amount: int) -> void:
+    if amount <= 0:
+        return
+    coins += amount
+    coins_changed.emit(coins)
+    save_progress()
+
+func owns_skin(skin_id: String) -> bool:
+    return skin_id in owned_skins
+
+func buy_or_equip_skin(skin_id: String) -> bool:
+    if not skins.has(skin_id):
+        return false
+    if owns_skin(skin_id):
+        equipped_skin = skin_id
+        skin_changed.emit(equipped_skin)
+        save_progress()
+        return true
+    var price: int = int(skins[skin_id].get("price", 0))
+    if coins < price:
+        return false
+    coins -= price
+    owned_skins.append(skin_id)
+    equipped_skin = skin_id
+    coins_changed.emit(coins)
+    skin_changed.emit(equipped_skin)
+    save_progress()
+    return true
+
+func get_equipped_skin_data() -> Dictionary:
+    return skins.get(equipped_skin, skins["default"])
+
+func restart_level() -> void:
+    get_tree().reload_current_scene()
+
+func go_to_main_menu() -> void:
+    get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
+func open_shop() -> void:
+    get_tree().change_scene_to_file("res://scenes/SkinShop.tscn")
+
+func save_progress() -> void:
+    var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+    if file:
+        file.store_var({
+            "unlocked_levels": unlocked_levels,
+            "total_deaths": total_deaths,
+            "current_level": current_level,
+            "coins": coins,
+            "owned_skins": owned_skins,
+            "equipped_skin": equipped_skin
+        })
+        file.close()
+
+func load_progress() -> void:
+    if not FileAccess.file_exists(SAVE_PATH):
+        return
+    var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+    if file == null:
+        return
+    var data = file.get_var()
+    file.close()
+    if not data is Dictionary:
+        return
+    unlocked_levels = int(data.get("unlocked_levels", 1))
+    total_deaths = int(data.get("total_deaths", 0))
+    current_level = int(data.get("current_level", 1))
+    coins = int(data.get("coins", 0))
+    owned_skins.clear()
+    for skin_id in data.get("owned_skins", ["default"]):
+        if skins.has(skin_id) and skin_id not in owned_skins:
+            owned_skins.append(skin_id)
+    if "default" not in owned_skins:
+        owned_skins.push_front("default")
+    equipped_skin = str(data.get("equipped_skin", "default"))
+    if not owns_skin(equipped_skin):
+        equipped_skin = "default"
+
+func reset_progress() -> void:
+    unlocked_levels = 1
+    total_deaths = 0
+    current_level = 1
+    coins = 0
+    owned_skins = ["default"]
+    equipped_skin = "default"
+    save_progress()
+    coins_changed.emit(coins)
+    skin_changed.emit(equipped_skin)
+
+################################################################################
+FILE: ShaveMyMustache/scripts/LevelSelect.gd
+################################################################################
+
+extends Control
+
+@onready var grid: GridContainer = $ScrollContainer/GridContainer
+@onready var back_button: Button = $BackButton
+@onready var title: Label = $Title
+
+var game_manager: GameManager
+
+func _ready() -> void:
+	game_manager = get_node_or_null("/root/GameManager")
+	back_button.pressed.connect(_on_back_pressed)
+	_populate_levels()
+
+func _populate_levels() -> void:
+	# Clear existing
+	for child in grid.get_children():
+		child.queue_free()
+	
+	if game_manager == null:
+		return
+	
+	for i in range(1, game_manager.levels_data.size() + 1):
+		var btn = Button.new()
+		btn.custom_minimum_size = Vector2(140, 90)
+		btn.theme_override_font_sizes.font_size = 22
+		
+		var unlocked = i <= game_manager.unlocked_levels
+		if unlocked:
+			var level_name = game_manager.levels_data.get(i, {}).get("name", "مرحلة " + str(i))
+			btn.text = str(i) + "\n" + level_name
+			btn.pressed.connect(_on_level_pressed.bind(i))
+		else:
+			btn.text = str(i) + "\n🔒"
+			btn.disabled = true
+			btn.modulate = Color(0.5, 0.5, 0.5)
+		
+		grid.add_child(btn)
+
+func _on_level_pressed(level_num: int) -> void:
+	if game_manager:
+		game_manager.start_level(level_num)
+
+func _on_back_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
+################################################################################
+FILE: ShaveMyMustache/scripts/PlayerVisual.gd
+################################################################################
+
+extends Node2D
+class_name PlayerVisual
+
+## رسم بسيط وأنيق لشخصية 2D بدون الحاجة لصور خارجية
+
+@onready var body: ColorRect = $Body
+@onready var head: ColorRect = $Head
+@onready var eye_l: ColorRect = $Head/EyeL
+@onready var eye_r: ColorRect = $Head/EyeR
+@onready var leg_l: ColorRect = $LegL
+@onready var leg_r: ColorRect = $LegR
+
+var facing_right: bool = true
+var time: float = 0.0
+var is_running: bool = false
+var is_jumping: bool = false
+
+func _ready() -> void:
+    _apply_equipped_skin()
+
+func _apply_equipped_skin() -> void:
+    var manager = get_node_or_null("/root/GameManager")
+    if manager == null:
+        return
+    var skin: Dictionary = manager.get_equipped_skin_data()
+    body.color = skin.get("body", Color("#315b91"))
+    head.color = skin.get("head", Color("#f2c9a5"))
+    leg_l.color = skin.get("legs", Color("#252b3a"))
+    leg_r.color = skin.get("legs", Color("#252b3a"))
+    if not manager.skin_changed.is_connected(_on_skin_changed):
+        manager.skin_changed.connect(_on_skin_changed)
+
+func _on_skin_changed(_skin_id: String) -> void:
+    _apply_equipped_skin()
+
+func _process(delta: float) -> void:
+	time += delta
+	_animate()
+
+func set_facing(right: bool) -> void:
+	facing_right = right
+	scale.x = 1.0 if right else -1.0
+
+func set_state(running: bool, jumping: bool, falling: bool) -> void:
+	is_running = running
+	is_jumping = jumping or falling
+
+func _animate() -> void:
+	if is_running and not is_jumping:
+		# Run bob
+		var bob = sin(time * 12.0) * 2.5
+		body.position.y = -22 + bob
+		head.position.y = -38 + bob
+		leg_l.rotation = sin(time * 12.0) * 0.4
+		leg_r.rotation = -sin(time * 12.0) * 0.4
+	elif is_jumping:
+		body.position.y = -24
+		head.position.y = -40
+		leg_l.rotation = -0.5
+		leg_r.rotation = 0.5
+	else:
+		# Idle
+		var idle = sin(time * 3.0) * 1.2
+		body.position.y = -22 + idle
+		head.position.y = -38 + idle
+		leg_l.rotation = 0.0
+		leg_r.rotation = 0.0
+
+################################################################################
+FILE: ShaveMyMustache/scripts/SkinShop.gd
+################################################################################
+
+extends Control
+
+var manager: GameManager
+var coins_label: Label
+var status_label: Label
+var list: VBoxContainer
+
+func _ready() -> void:
+    manager = get_node_or_null("/root/GameManager") as GameManager
+    _build_ui()
+    if manager:
+        manager.coins_changed.connect(_refresh)
+        manager.skin_changed.connect(_refresh)
+    _refresh()
+
+func _build_ui() -> void:
+    var bg := ColorRect.new()
+    bg.color = Color("#171522")
+    bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    add_child(bg)
+    var margin := MarginContainer.new()
+    margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    margin.add_theme_constant_override("margin_left", 24)
+    margin.add_theme_constant_override("margin_right", 24)
+    margin.add_theme_constant_override("margin_top", 24)
+    margin.add_theme_constant_override("margin_bottom", 24)
+    add_child(margin)
+    var column := VBoxContainer.new()
+    column.add_theme_constant_override("separation", 12)
+    margin.add_child(column)
+    var title := Label.new()
+    title.text = "متجر السكنات"
+    title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    title.add_theme_font_size_override("font_size", 32)
+    title.add_theme_color_override("font_color", Color("#ffd45c"))
+    column.add_child(title)
+    coins_label = Label.new()
+    coins_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    coins_label.add_theme_font_size_override("font_size", 23)
+    column.add_child(coins_label)
+    var note := Label.new()
+    note.text = "اكسب 20 كوين عند إنهاء المرحلة و5 إضافية إذا لم تمت."
+    note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    column.add_child(note)
+    var scroll := ScrollContainer.new()
+    scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+    column.add_child(scroll)
+    list = VBoxContainer.new()
+    list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    list.add_theme_constant_override("separation", 10)
+    scroll.add_child(list)
+    status_label = Label.new()
+    status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    column.add_child(status_label)
+    var back := Button.new()
+    back.text = "رجوع للقائمة"
+    back.custom_minimum_size.y = 56
+    back.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/MainMenu.tscn"))
+    column.add_child(back)
+
+func _refresh(_unused = null) -> void:
+    if manager == null or not is_instance_valid(coins_label):
+        return
+    coins_label.text = "الكوينز: %d" % manager.coins
+    status_label.text = "السكن الحالي: " + str(manager.skins[manager.equipped_skin].name)
+    for child in list.get_children():
+        child.queue_free()
+    for skin_id in manager.skins.keys():
+        var data: Dictionary = manager.skins[skin_id]
+        var row := HBoxContainer.new()
+        row.custom_minimum_size.y = 72
+        list.add_child(row)
+        var swatch := ColorRect.new()
+        swatch.custom_minimum_size = Vector2(48, 48)
+        swatch.color = data.get("body", Color.WHITE)
+        row.add_child(swatch)
+        var details := VBoxContainer.new()
+        details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        row.add_child(details)
+        var name_label := Label.new()
+        name_label.text = str(data.name)
+        name_label.add_theme_font_size_override("font_size", 18)
+        details.add_child(name_label)
+        var description := Label.new()
+        description.text = str(data.description)
+        description.add_theme_font_size_override("font_size", 12)
+        details.add_child(description)
+        var button := Button.new()
+        button.custom_minimum_size = Vector2(118, 52)
+        if manager.equipped_skin == skin_id:
+            button.text = "مجهّز"
+            button.disabled = true
+        elif manager.owns_skin(skin_id):
+            button.text = "تجهيز"
+            button.pressed.connect(_on_skin_action.bind(skin_id))
+        else:
+            button.text = "شراء %d" % int(data.price)
+            button.disabled = manager.coins < int(data.price)
+            button.pressed.connect(_on_skin_action.bind(skin_id))
+        row.add_child(button)
+
+func _on_skin_action(skin_id: String) -> void:
+    if manager.buy_or_equip_skin(skin_id):
+        status_label.text = "تم تجهيز السكن!"
+    else:
+        status_label.text = "كوينزك مش كفاية! العب واجمع كوينز."
+    _refresh()
+
+################################################################################
+FILE: ShaveMyMustache/scripts/MobileControls.gd
+################################################################################
+
+extends CanvasLayer
+class_name MobileControls
+
+## أزرار التحكم للموبايل - قابلة للتخصيص لاحقًا
+
+signal jump_pressed
+signal jump_released
+
+@onready var btn_left: TouchScreenButton = $Controls/LeftButton
+@onready var btn_right: TouchScreenButton = $Controls/RightButton
+@onready var btn_jump: TouchScreenButton = $Controls/JumpButton
+
+var player: Player = null
+
+func _ready() -> void:
+	# Find player in the scene
+	await get_tree().process_frame
+	player = get_tree().get_first_node_in_group("player") as Player
+	
+	if btn_left:
+		btn_left.pressed.connect(_on_left_pressed)
+		btn_left.released.connect(_on_left_released)
+	if btn_right:
+		btn_right.pressed.connect(_on_right_pressed)
+		btn_right.released.connect(_on_right_released)
+	if btn_jump:
+		btn_jump.pressed.connect(_on_jump_pressed)
+		btn_jump.released.connect(_on_jump_released)
+
+func _process(_delta: float) -> void:
+	if player == null:
+		player = get_tree().get_first_node_in_group("player") as Player
+		return
+	
+	# Continuous input while held
+	var left = btn_left.is_pressed() if btn_left else false
+	var right = btn_right.is_pressed() if btn_right else false
+	var jump = btn_jump.is_pressed() if btn_jump else false
+	player.set_mobile_input(left, right, jump)
+
+func _on_left_pressed() -> void:
+	pass
+
+func _on_left_released() -> void:
+	pass
+
+func _on_right_pressed() -> void:
+	pass
+
+func _on_right_released() -> void:
+	pass
+
+func _on_jump_pressed() -> void:
+	jump_pressed.emit()
+
+func _on_jump_released() -> void:
+	jump_released.emit()
+
+################################################################################
+FILE: ShaveMyMustache/levels/Level09.tscn
+################################################################################
+
+[gd_scene load_steps=8 format=3 uid="uid://level09"]
+
+[ext_resource type="Script" path="res://scripts/LevelBase.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/traps/DisappearingPlatform.gd" id="3_disappear"]
+[ext_resource type="Script" path="res://scripts/traps/FallingCeiling.gd" id="4_ceiling"]
+[ext_resource type="Script" path="res://scripts/traps/FakeGoal.gd" id="5_fake"]
+[ext_resource type="Script" path="res://scripts/traps/FakeArrow.gd" id="6_arrow"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(100, 18)
+
+[node name="Level09" type="Node2D"]
+script = ExtResource("1_level")
+level_number = 9
+level_name = "كابوس الشنب"
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 2200.0
+offset_bottom = 1300.0
+color = Color(0.04, 0.03, 0.07, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(40, 620)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Start" type="StaticBody2D" parent="Platforms"]
+position = Vector2(55, 670)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Start"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/Start"]
+offset_left = -50.0
+offset_top = -9.0
+offset_right = 50.0
+offset_bottom = 9.0
+color = Color(0.25, 0.35, 0.28, 1)
+
+[node name="D1" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(180, 610)
+collision_layer = 2
+script = ExtResource("3_disappear")
+disappear_delay = 0.14
+detection_distance = 85.0
+reappear_time = 2.5
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/D1"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/D1"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/D1"]
+offset_left = -50.0
+offset_top = -9.0
+offset_right = 50.0
+offset_bottom = 9.0
+color = Color(0.7, 0.28, 0.2, 1)
+[node name="Timer" type="Timer" parent="Platforms/D1"]
+
+[node name="D2" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(310, 550)
+collision_layer = 2
+script = ExtResource("3_disappear")
+disappear_delay = 0.12
+detection_distance = 80.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/D2"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/D2"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/D2"]
+offset_left = -50.0
+offset_top = -9.0
+offset_right = 50.0
+offset_bottom = 9.0
+color = Color(0.7, 0.28, 0.2, 1)
+[node name="Timer" type="Timer" parent="Platforms/D2"]
+
+[node name="D3" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(440, 490)
+collision_layer = 2
+script = ExtResource("3_disappear")
+disappear_delay = 0.11
+detection_distance = 75.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/D3"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/D3"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/D3"]
+offset_left = -50.0
+offset_top = -9.0
+offset_right = 50.0
+offset_bottom = 9.0
+color = Color(0.7, 0.28, 0.2, 1)
+[node name="Timer" type="Timer" parent="Platforms/D3"]
+
+[node name="Under" type="StaticBody2D" parent="Platforms"]
+position = Vector2(590, 450)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Under"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/Under"]
+offset_left = -50.0
+offset_top = -9.0
+offset_right = 50.0
+offset_bottom = 9.0
+color = Color(0.45, 0.25, 0.25, 1)
+
+[node name="Ceil1" type="AnimatableBody2D" parent="."]
+position = Vector2(590, 300)
+collision_layer = 4
+script = ExtResource("4_ceiling")
+fall_delay = 0.09
+fall_speed = 820.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceil1"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Ceil1"]
+offset_left = -60.0
+offset_top = -12.0
+offset_right = 60.0
+offset_bottom = 12.0
+color = Color(0.85, 0.15, 0.12, 1)
+[node name="Timer" type="Timer" parent="Ceil1"]
+
+[node name="D4" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(740, 420)
+collision_layer = 2
+script = ExtResource("3_disappear")
+disappear_delay = 0.13
+detection_distance = 80.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/D4"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/D4"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/D4"]
+offset_left = -50.0
+offset_top = -9.0
+offset_right = 50.0
+offset_bottom = 9.0
+color = Color(0.7, 0.28, 0.2, 1)
+[node name="Timer" type="Timer" parent="Platforms/D4"]
+
+[node name="FakeArrow" type="Node2D" parent="."]
+position = Vector2(440, 430)
+script = ExtResource("6_arrow")
+wrong_direction = Vector2(-1, 0)
+message = "ارجع أحسن ←"
+[node name="Label" type="Label" parent="FakeArrow"]
+offset_left = -60.0
+offset_top = -25.0
+offset_right = 60.0
+offset_bottom = 0.0
+theme_override_colors/font_color = Color(1, 0.3, 0.2, 1)
+theme_override_font_sizes/font_size = 13
+text = "ارجع أحسن ←"
+horizontal_alignment = 1
+[node name="ArrowLabel" type="Label" parent="FakeArrow"]
+offset_left = -25.0
+offset_top = 5.0
+offset_right = 25.0
+offset_bottom = 30.0
+theme_override_colors/font_color = Color(1, 0.2, 0.1, 1)
+theme_override_font_sizes/font_size = 22
+text = "←←"
+horizontal_alignment = 1
+
+[node name="Fake1" type="Area2D" parent="."]
+position = Vector2(900, 360)
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("5_fake")
+behavior = 0
+run_speed = 480.0
+run_distance = 500.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fake1"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Fake1"]
+[node name="ColorRect" type="ColorRect" parent="Fake1"]
+offset_left = -22.0
+offset_top = -30.0
+offset_right = 22.0
+offset_bottom = 30.0
+color = Color(0.95, 0.7, 0.1, 1)
+[node name="Label" type="Label" parent="Fake1"]
+offset_left = -40.0
+offset_top = -50.0
+offset_right = 40.0
+offset_bottom = -28.0
+theme_override_font_sizes/font_size = 12
+text = "النهاية!"
+horizontal_alignment = 1
+
+[node name="D5" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(1080, 400)
+collision_layer = 2
+script = ExtResource("3_disappear")
+disappear_delay = 0.12
+detection_distance = 75.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/D5"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/D5"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/D5"]
+offset_left = -50.0
+offset_top = -9.0
+offset_right = 50.0
+offset_bottom = 9.0
+color = Color(0.7, 0.28, 0.2, 1)
+[node name="Timer" type="Timer" parent="Platforms/D5"]
+
+[node name="Fake2" type="Area2D" parent="."]
+position = Vector2(1250, 340)
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("5_fake")
+behavior = 3
+fake_message = "فعلًا مبروك... اه لا 😈"
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fake2"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Fake2"]
+[node name="ColorRect" type="ColorRect" parent="Fake2"]
+offset_left = -22.0
+offset_top = -30.0
+offset_right = 22.0
+offset_bottom = 30.0
+color = Color(0.9, 0.65, 0.15, 1)
+[node name="Label" type="Label" parent="Fake2"]
+offset_left = -45.0
+offset_top = -50.0
+offset_right = 45.0
+offset_bottom = -28.0
+theme_override_font_sizes/font_size = 11
+text = "النهاية الحقيقية؟"
+horizontal_alignment = 1
+
+[node name="Last" type="StaticBody2D" parent="Platforms"]
+position = Vector2(1450, 380)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Last"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/Last"]
+offset_left = -50.0
+offset_top = -9.0
+offset_right = 50.0
+offset_bottom = 9.0
+color = Color(0.25, 0.35, 0.28, 1)
+
+[node name="RealGoal" type="Area2D" parent="." groups=["real_goal"]]
+position = Vector2(1600, 320)
+collision_layer = 0
+collision_mask = 1
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RealGoal"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="RealGoal"]
+offset_left = -22.0
+offset_top = -30.0
+offset_right = 22.0
+offset_bottom = 30.0
+color = Color(0.05, 0.95, 0.25, 1)
+[node name="Label" type="Label" parent="RealGoal"]
+offset_left = -50.0
+offset_top = -48.0
+offset_right = 50.0
+offset_bottom = -25.0
+theme_override_font_sizes/font_size = 11
+text = "النهاية... بجد"
+horizontal_alignment = 1
+
+[node name="UI" type="CanvasLayer" parent="."]
+[node name="RestartButton" type="Button" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = -50.0
+text = "إعادة"
+[node name="MenuButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = -50.0
+text = "القائمة"
+[node name="WinPanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -130.0
+offset_right = 200.0
+offset_bottom = 130.0
+[node name="Message" type="Label" parent="UI/WinPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 20
+text = "عدّيت كابوس الشنب؟!
+Level Devil دلوقتي لعبة أطفال جنب دي.
+الشنب بيقول: احلقني بقا 🪒"
+horizontal_alignment = 1
+vertical_alignment = 1
+[node name="LosePanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = 100.0
+[node name="Message" type="Label" parent="UI/LosePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 18
+text = "الكابوس لسه مستمر 😈🔥"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/levels/Level07.tscn
+################################################################################
+
+[gd_scene load_steps=7 format=3 uid="uid://level07"]
+
+[ext_resource type="Script" path="res://scripts/LevelBase.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/traps/DisappearingPlatform.gd" id="3_disappear"]
+[ext_resource type="Script" path="res://scripts/traps/FallingCeiling.gd" id="4_ceiling"]
+[ext_resource type="Script" path="res://scripts/traps/FakeGoal.gd" id="5_fake"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(140, 22)
+
+[node name="Level07" type="Node2D"]
+script = ExtResource("1_level")
+level_number = 7
+level_name = "الخليط المجنون"
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -150.0
+offset_right = 1800.0
+offset_bottom = 1200.0
+color = Color(0.08, 0.07, 0.12, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(60, 580)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Start" type="StaticBody2D" parent="Platforms"]
+position = Vector2(80, 630)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Start"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/Start"]
+offset_left = -70.0
+offset_top = -11.0
+offset_right = 70.0
+offset_bottom = 11.0
+color = Color(0.3, 0.45, 0.35, 1)
+
+[node name="Safe2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(250, 560)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Safe2"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/Safe2"]
+offset_left = -70.0
+offset_top = -11.0
+offset_right = 70.0
+offset_bottom = 11.0
+color = Color(0.3, 0.45, 0.35, 1)
+
+[node name="Disappear1" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(430, 500)
+collision_layer = 2
+script = ExtResource("3_disappear")
+trigger_mode = 0
+disappear_delay = 0.28
+detection_distance = 130.0
+reappear_time = 1.8
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Disappear1"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/Disappear1"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/Disappear1"]
+offset_left = -70.0
+offset_top = -11.0
+offset_right = 70.0
+offset_bottom = 11.0
+color = Color(0.6, 0.35, 0.25, 1)
+[node name="Timer" type="Timer" parent="Platforms/Disappear1"]
+
+[node name="Disappear2" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(600, 440)
+collision_layer = 2
+script = ExtResource("3_disappear")
+trigger_mode = 0
+disappear_delay = 0.22
+detection_distance = 120.0
+reappear_time = 1.6
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Disappear2"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/Disappear2"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/Disappear2"]
+offset_left = -70.0
+offset_top = -11.0
+offset_right = 70.0
+offset_bottom = 11.0
+color = Color(0.6, 0.35, 0.25, 1)
+[node name="Timer" type="Timer" parent="Platforms/Disappear2"]
+
+[node name="UnderCeil" type="StaticBody2D" parent="Platforms"]
+position = Vector2(780, 400)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/UnderCeil"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/UnderCeil"]
+offset_left = -70.0
+offset_top = -11.0
+offset_right = 70.0
+offset_bottom = 11.0
+color = Color(0.4, 0.3, 0.3, 1)
+
+[node name="FallingCeiling1" type="AnimatableBody2D" parent="."]
+position = Vector2(780, 260)
+collision_layer = 4
+script = ExtResource("4_ceiling")
+fall_delay = 0.18
+fall_speed = 550.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FallingCeiling1"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="FallingCeiling1"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.75, 0.22, 0.18, 1)
+[node name="Timer" type="Timer" parent="FallingCeiling1"]
+
+[node name="FakeGoal" type="Area2D" parent="."]
+position = Vector2(980, 340)
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("5_fake")
+behavior = 0
+run_speed = 340.0
+run_distance = 380.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FakeGoal"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="FakeGoal"]
+[node name="ColorRect" type="ColorRect" parent="FakeGoal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.9, 0.7, 0.2, 1)
+[node name="Label" type="Label" parent="FakeGoal"]
+offset_left = -50.0
+offset_top = -60.0
+offset_right = 50.0
+offset_bottom = -30.0
+theme_override_font_sizes/font_size = 14
+text = "النهاية؟"
+horizontal_alignment = 1
+
+[node name="RealGoal" type="Area2D" parent="." groups=["real_goal"]]
+position = Vector2(1250, 320)
+collision_layer = 0
+collision_mask = 1
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RealGoal"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="RealGoal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.15, 0.85, 0.3, 1)
+[node name="Label" type="Label" parent="RealGoal"]
+offset_left = -55.0
+offset_top = -55.0
+offset_right = 55.0
+offset_bottom = -25.0
+theme_override_font_sizes/font_size = 13
+text = "النهاية الحقيقية"
+horizontal_alignment = 1
+
+[node name="LastPlat" type="StaticBody2D" parent="Platforms"]
+position = Vector2(1120, 380)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/LastPlat"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/LastPlat"]
+offset_left = -70.0
+offset_top = -11.0
+offset_right = 70.0
+offset_bottom = 11.0
+color = Color(0.3, 0.45, 0.35, 1)
+
+[node name="UI" type="CanvasLayer" parent="."]
+[node name="RestartButton" type="Button" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = -50.0
+text = "إعادة"
+[node name="MenuButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = -50.0
+text = "القائمة"
+[node name="WinPanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -190.0
+offset_top = -110.0
+offset_right = 190.0
+offset_bottom = 110.0
+[node name="Message" type="Label" parent="UI/WinPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 22
+text = "عدت الخليط المجنون؟!
+الشنب بيفكر يهرب 😨"
+horizontal_alignment = 1
+vertical_alignment = 1
+[node name="LosePanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -90.0
+offset_right = 170.0
+offset_bottom = 90.0
+[node name="Message" type="Label" parent="UI/LosePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 20
+text = "الخليط سحقك 💥"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/levels/Level06.tscn
+################################################################################
+
+[gd_scene load_steps=5 format=3 uid="uid://level06"]
+
+[ext_resource type="Script" path="res://scripts/LevelBase.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/traps/GravityZone.gd" id="3_grav"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(160, 24)
+
+[node name="Level06" type="Node2D"]
+script = ExtResource("1_level")
+level_number = 6
+level_name = "الجاذبية المعكوسة"
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -200.0
+offset_right = 1400.0
+offset_bottom = 1200.0
+color = Color(0.09, 0.08, 0.15, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(70, 560)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Start" type="StaticBody2D" parent="Platforms"]
+position = Vector2(90, 610)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Start"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/Start"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="Mid" type="StaticBody2D" parent="Platforms"]
+position = Vector2(320, 520)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Mid"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/Mid"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="InZone" type="StaticBody2D" parent="Platforms"]
+position = Vector2(560, 300)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/InZone"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/InZone"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.45, 0.3, 0.6, 1)
+
+[node name="End" type="StaticBody2D" parent="Platforms"]
+position = Vector2(820, 450)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/End"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/End"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="GravityZone" type="Area2D" parent="."]
+position = Vector2(560, 400)
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("3_grav")
+gravity_multiplier = -0.85
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GravityZone"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="GravityZone"]
+offset_left = -100.0
+offset_top = -80.0
+offset_right = 100.0
+offset_bottom = 80.0
+color = Color(0.45, 0.2, 0.7, 0.3)
+
+[node name="Label" type="Label" parent="GravityZone"]
+offset_left = -70.0
+offset_top = -20.0
+offset_right = 70.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 16
+text = "⚠️ جاذبية معكوسة"
+horizontal_alignment = 1
+
+[node name="Goal" type="Area2D" parent="." groups=["real_goal"]]
+position = Vector2(980, 400)
+collision_layer = 0
+collision_mask = 1
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goal"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Goal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.2, 0.8, 0.3, 1)
+
+[node name="UI" type="CanvasLayer" parent="."]
+[node name="RestartButton" type="Button" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = -50.0
+text = "إعادة"
+[node name="MenuButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = -50.0
+text = "القائمة"
+[node name="WinPanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = 100.0
+[node name="Message" type="Label" parent="UI/WinPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 22
+text = "اتحكمت في الجاذبية!
+الشنب بدأ يقلق 😨"
+horizontal_alignment = 1
+vertical_alignment = 1
+[node name="LosePanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -80.0
+offset_right = 160.0
+offset_bottom = 80.0
+[node name="Message" type="Label" parent="UI/LosePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 20
+text = "الجاذبية خانتك 🌀"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/levels/Level08.tscn
+################################################################################
+
+[gd_scene load_steps=8 format=3 uid="uid://level08"]
+
+[ext_resource type="Script" path="res://scripts/LevelBase.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/traps/DisappearingPlatform.gd" id="3_disappear"]
+[ext_resource type="Script" path="res://scripts/traps/FallingCeiling.gd" id="4_ceiling"]
+[ext_resource type="Script" path="res://scripts/traps/FakeGoal.gd" id="5_fake"]
+[ext_resource type="Script" path="res://scripts/traps/FakeArrow.gd" id="6_arrow"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(120, 20)
+
+[node name="Level08" type="Node2D"]
+script = ExtResource("1_level")
+level_number = 8
+level_name = "لا تثق في شيء"
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 2000.0
+offset_bottom = 1200.0
+color = Color(0.06, 0.05, 0.1, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(50, 600)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Start" type="StaticBody2D" parent="Platforms"]
+position = Vector2(70, 650)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Start"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/Start"]
+offset_left = -60.0
+offset_top = -10.0
+offset_right = 60.0
+offset_bottom = 10.0
+color = Color(0.28, 0.4, 0.32, 1)
+
+[node name="Dis1" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(220, 590)
+collision_layer = 2
+script = ExtResource("3_disappear")
+disappear_delay = 0.25
+detection_distance = 110.0
+reappear_time = 1.4
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Dis1"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/Dis1"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/Dis1"]
+offset_left = -60.0
+offset_top = -10.0
+offset_right = 60.0
+offset_bottom = 10.0
+color = Color(0.65, 0.3, 0.22, 1)
+[node name="Timer" type="Timer" parent="Platforms/Dis1"]
+
+[node name="Dis2" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(380, 530)
+collision_layer = 2
+script = ExtResource("3_disappear")
+disappear_delay = 0.2
+detection_distance = 100.0
+reappear_time = 1.3
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Dis2"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/Dis2"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/Dis2"]
+offset_left = -60.0
+offset_top = -10.0
+offset_right = 60.0
+offset_bottom = 10.0
+color = Color(0.65, 0.3, 0.22, 1)
+[node name="Timer" type="Timer" parent="Platforms/Dis2"]
+
+[node name="Dis3" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(540, 470)
+collision_layer = 2
+script = ExtResource("3_disappear")
+disappear_delay = 0.18
+detection_distance = 95.0
+reappear_time = 1.2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Dis3"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/Dis3"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/Dis3"]
+offset_left = -60.0
+offset_top = -10.0
+offset_right = 60.0
+offset_bottom = 10.0
+color = Color(0.65, 0.3, 0.22, 1)
+[node name="Timer" type="Timer" parent="Platforms/Dis3"]
+
+[node name="Under1" type="StaticBody2D" parent="Platforms"]
+position = Vector2(720, 430)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Under1"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/Under1"]
+offset_left = -60.0
+offset_top = -10.0
+offset_right = 60.0
+offset_bottom = 10.0
+color = Color(0.4, 0.28, 0.28, 1)
+
+[node name="Ceil1" type="AnimatableBody2D" parent="."]
+position = Vector2(720, 290)
+collision_layer = 4
+script = ExtResource("4_ceiling")
+fall_delay = 0.15
+fall_speed = 600.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ceil1"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Ceil1"]
+offset_left = -70.0
+offset_top = -12.0
+offset_right = 70.0
+offset_bottom = 12.0
+color = Color(0.8, 0.2, 0.15, 1)
+[node name="Timer" type="Timer" parent="Ceil1"]
+
+[node name="Dis4" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(900, 400)
+collision_layer = 2
+script = ExtResource("3_disappear")
+disappear_delay = 0.2
+detection_distance = 100.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Dis4"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/Dis4"]
+[node name="ColorRect" type="ColorRect" parent="Platforms/Dis4"]
+offset_left = -60.0
+offset_top = -10.0
+offset_right = 60.0
+offset_bottom = 10.0
+color = Color(0.65, 0.3, 0.22, 1)
+[node name="Timer" type="Timer" parent="Platforms/Dis4"]
+
+[node name="FakeArrow1" type="Node2D" parent="."]
+position = Vector2(540, 410)
+script = ExtResource("6_arrow")
+wrong_direction = Vector2(0, 1)
+message = "انزل هنا بأمان ↓"
+[node name="Label" type="Label" parent="FakeArrow1"]
+offset_left = -70.0
+offset_top = -25.0
+offset_right = 70.0
+offset_bottom = 0.0
+theme_override_colors/font_color = Color(1, 0.35, 0.25, 1)
+theme_override_font_sizes/font_size = 14
+text = "انزل هنا بأمان ↓"
+horizontal_alignment = 1
+[node name="ArrowLabel" type="Label" parent="FakeArrow1"]
+offset_left = -30.0
+offset_top = 5.0
+offset_right = 30.0
+offset_bottom = 35.0
+theme_override_colors/font_color = Color(1, 0.25, 0.15, 1)
+theme_override_font_sizes/font_size = 24
+text = "↓↓"
+horizontal_alignment = 1
+
+[node name="FakeGoal" type="Area2D" parent="."]
+position = Vector2(1100, 340)
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("5_fake")
+behavior = 0
+run_speed = 380.0
+run_distance = 420.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FakeGoal"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="Sprite2D" type="Sprite2D" parent="FakeGoal"]
+[node name="ColorRect" type="ColorRect" parent="FakeGoal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.95, 0.75, 0.15, 1)
+[node name="Label" type="Label" parent="FakeGoal"]
+offset_left = -45.0
+offset_top = -55.0
+offset_right = 45.0
+offset_bottom = -30.0
+theme_override_font_sizes/font_size = 13
+text = "النهاية!!"
+horizontal_alignment = 1
+
+[node name="LastSafe" type="StaticBody2D" parent="Platforms"]
+position = Vector2(1300, 380)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/LastSafe"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/LastSafe"]
+offset_left = -60.0
+offset_top = -10.0
+offset_right = 60.0
+offset_bottom = 10.0
+color = Color(0.28, 0.4, 0.32, 1)
+
+[node name="RealGoal" type="Area2D" parent="." groups=["real_goal"]]
+position = Vector2(1450, 320)
+collision_layer = 0
+collision_mask = 1
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RealGoal"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="RealGoal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.1, 0.9, 0.3, 1)
+[node name="Label" type="Label" parent="RealGoal"]
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = -25.0
+theme_override_font_sizes/font_size = 12
+text = "النهاية الحقيقية"
+horizontal_alignment = 1
+
+[node name="UI" type="CanvasLayer" parent="."]
+[node name="RestartButton" type="Button" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = -50.0
+text = "إعادة"
+[node name="MenuButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = -50.0
+text = "القائمة"
+[node name="WinPanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -120.0
+offset_right = 200.0
+offset_bottom = 120.0
+[node name="Message" type="Label" parent="UI/WinPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 22
+text = "ما وثقتش في حاجة...
+وكسبت!!
+الشنب بيرتجف من الخوف 🫣"
+horizontal_alignment = 1
+vertical_alignment = 1
+[node name="LosePanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -90.0
+offset_right = 170.0
+offset_bottom = 90.0
+[node name="Message" type="Label" parent="UI/LosePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 20
+text = "وثقت في الحاجة الغلط 😈"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/levels/Level04.tscn
+################################################################################
+
+[gd_scene load_steps=6 format=3 uid="uid://level04"]
+
+[ext_resource type="Script" path="res://scripts/LevelBase.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/traps/FallingCeiling.gd" id="3_ceiling"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(160, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ceiling"]
+size = Vector2(180, 30)
+
+[node name="Level04" type="Node2D"]
+script = ExtResource("1_level")
+level_number = 4
+level_name = "السقف الغاضب"
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -100.0
+offset_right = 1400.0
+offset_bottom = 1100.0
+color = Color(0.13, 0.1, 0.12, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(70, 550)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Start" type="StaticBody2D" parent="Platforms"]
+position = Vector2(90, 600)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Start"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Start"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="Mid" type="StaticBody2D" parent="Platforms"]
+position = Vector2(320, 520)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Mid"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Mid"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="UnderCeiling" type="StaticBody2D" parent="Platforms"]
+position = Vector2(560, 480)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/UnderCeiling"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/UnderCeiling"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.4, 0.3, 0.3, 1)
+
+[node name="EndPlat" type="StaticBody2D" parent="Platforms"]
+position = Vector2(820, 400)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/EndPlat"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/EndPlat"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="FallingCeiling1" type="AnimatableBody2D" parent="."]
+position = Vector2(560, 320)
+collision_layer = 4
+script = ExtResource("3_ceiling")
+fall_delay = 0.2
+fall_speed = 500.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FallingCeiling1"]
+shape = SubResource("RectangleShape2D_ceiling")
+
+[node name="ColorRect" type="ColorRect" parent="FallingCeiling1"]
+offset_left = -90.0
+offset_top = -15.0
+offset_right = 90.0
+offset_bottom = 15.0
+color = Color(0.7, 0.25, 0.2, 1)
+
+[node name="Timer" type="Timer" parent="FallingCeiling1"]
+
+[node name="Goal" type="Area2D" parent="." groups=["real_goal"]]
+position = Vector2(950, 340)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goal"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Goal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.2, 0.8, 0.3, 1)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="RestartButton" type="Button" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = -50.0
+text = "إعادة"
+
+[node name="MenuButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = -50.0
+text = "القائمة"
+
+[node name="WinPanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -110.0
+offset_right = 180.0
+offset_bottom = 110.0
+
+[node name="Message" type="Label" parent="UI/WinPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 22
+text = "السقف ما قدرش عليك!
+الشنب بيرتجف 😏"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LosePanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -90.0
+offset_right = 180.0
+offset_bottom = 90.0
+
+[node name="Message" type="Label" parent="UI/LosePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 22
+text = "السقف سحقك 💀"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/levels/Level02.tscn
+################################################################################
+
+[gd_scene load_steps=6 format=3 uid="uid://level02"]
+
+[ext_resource type="Script" path="res://scripts/LevelBase.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/traps/DisappearingPlatform.gd" id="3_disappear"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(160, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_goal"]
+size = Vector2(48, 64)
+
+[node name="Level02" type="Node2D"]
+script = ExtResource("1_level")
+level_number = 2
+level_name = "الأرض الغدارة"
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = -200.0
+offset_right = 1400.0
+offset_bottom = 1100.0
+color = Color(0.14, 0.11, 0.16, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(60, 500)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="SafeStart" type="StaticBody2D" parent="Platforms"]
+position = Vector2(80, 560)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/SafeStart"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/SafeStart"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.3, 0.45, 0.35, 1)
+
+[node name="Disappear1" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(280, 500)
+collision_layer = 2
+script = ExtResource("3_disappear")
+trigger_mode = 0
+disappear_delay = 0.4
+detection_distance = 140.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Disappear1"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/Disappear1"]
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Disappear1"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.55, 0.35, 0.25, 1)
+
+[node name="Timer" type="Timer" parent="Platforms/Disappear1"]
+
+[node name="Disappear2" type="AnimatableBody2D" parent="Platforms"]
+position = Vector2(480, 430)
+collision_layer = 2
+script = ExtResource("3_disappear")
+trigger_mode = 0
+disappear_delay = 0.3
+detection_distance = 130.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Disappear2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite2D" type="Sprite2D" parent="Platforms/Disappear2"]
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Disappear2"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.55, 0.35, 0.25, 1)
+
+[node name="Timer" type="Timer" parent="Platforms/Disappear2"]
+
+[node name="SafePlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(680, 370)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/SafePlatform"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/SafePlatform"]
+offset_left = -80.0
+offset_top = -12.0
+offset_right = 80.0
+offset_bottom = 12.0
+color = Color(0.3, 0.45, 0.35, 1)
+
+[node name="Goal" type="Area2D" parent="." groups=["real_goal"]]
+position = Vector2(850, 300)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goal"]
+shape = SubResource("RectangleShape2D_goal")
+
+[node name="ColorRect" type="ColorRect" parent="Goal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.2, 0.8, 0.3, 1)
+
+[node name="Label" type="Label" parent="Goal"]
+offset_left = -50.0
+offset_top = -60.0
+offset_right = 50.0
+offset_bottom = -30.0
+theme_override_font_sizes/font_size = 16
+text = "النهاية الحقيقية؟"
+horizontal_alignment = 1
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="DeathLabel" type="Label" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -40.0
+offset_right = 150.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 28
+text = "مت!"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = -50.0
+text = "إعادة"
+
+[node name="MenuButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = -50.0
+text = "القائمة"
+
+[node name="WinPanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -120.0
+offset_right = 180.0
+offset_bottom = 120.0
+
+[node name="Message" type="Label" parent="UI/WinPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 24
+text = "نجحت؟ مستحيل!
+الشنب لسه صامد 🥸"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LosePanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = 100.0
+
+[node name="Message" type="Label" parent="UI/LosePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 22
+text = "الأرض خانتك 😈"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/levels/Level05.tscn
+################################################################################
+
+[gd_scene load_steps=5 format=3 uid="uid://level05"]
+
+[ext_resource type="Script" path="res://scripts/LevelBase.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/traps/FakeArrow.gd" id="3_arrow"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(150, 24)
+
+[node name="Level05" type="Node2D"]
+script = ExtResource("1_level")
+level_number = 5
+level_name = "الأسهم الكذابة"
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 1500.0
+offset_bottom = 1100.0
+color = Color(0.11, 0.13, 0.17, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(60, 540)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="P1" type="StaticBody2D" parent="Platforms"]
+position = Vector2(80, 590)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/P1"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/P1"]
+offset_left = -75.0
+offset_top = -12.0
+offset_right = 75.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="P2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(280, 510)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/P2"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/P2"]
+offset_left = -75.0
+offset_top = -12.0
+offset_right = 75.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="P3" type="StaticBody2D" parent="Platforms"]
+position = Vector2(500, 430)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/P3"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/P3"]
+offset_left = -75.0
+offset_top = -12.0
+offset_right = 75.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="P4" type="StaticBody2D" parent="Platforms"]
+position = Vector2(750, 360)
+collision_layer = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/P4"]
+shape = SubResource("RectangleShape2D_platform")
+[node name="ColorRect" type="ColorRect" parent="Platforms/P4"]
+offset_left = -75.0
+offset_top = -12.0
+offset_right = 75.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="FakeArrow1" type="Node2D" parent="."]
+position = Vector2(280, 450)
+script = ExtResource("3_arrow")
+wrong_direction = Vector2(-1, 0)
+message = "الطريق من الشمال ←"
+
+[node name="Label" type="Label" parent="FakeArrow1"]
+offset_left = -80.0
+offset_top = -30.0
+offset_right = 80.0
+offset_bottom = 0.0
+theme_override_colors/font_color = Color(1, 0.4, 0.3, 1)
+theme_override_font_sizes/font_size = 16
+text = "الطريق من الشمال ←"
+horizontal_alignment = 1
+
+[node name="ArrowLabel" type="Label" parent="FakeArrow1"]
+offset_left = -40.0
+offset_top = 5.0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(1, 0.3, 0.2, 1)
+theme_override_font_sizes/font_size = 28
+text = "←←←"
+horizontal_alignment = 1
+
+[node name="FakeArrow2" type="Node2D" parent="."]
+position = Vector2(500, 370)
+script = ExtResource("3_arrow")
+wrong_direction = Vector2(0, 1)
+message = "انزل هنا ↓"
+
+[node name="Label" type="Label" parent="FakeArrow2"]
+offset_left = -60.0
+offset_top = -30.0
+offset_right = 60.0
+offset_bottom = 0.0
+theme_override_colors/font_color = Color(1, 0.4, 0.3, 1)
+theme_override_font_sizes/font_size = 16
+text = "انزل هنا ↓"
+horizontal_alignment = 1
+
+[node name="ArrowLabel" type="Label" parent="FakeArrow2"]
+offset_left = -30.0
+offset_top = 5.0
+offset_right = 30.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(1, 0.3, 0.2, 1)
+theme_override_font_sizes/font_size = 28
+text = "↓↓↓"
+horizontal_alignment = 1
+
+[node name="Goal" type="Area2D" parent="." groups=["real_goal"]]
+position = Vector2(950, 300)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goal"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Goal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.2, 0.8, 0.3, 1)
+
+[node name="UI" type="CanvasLayer" parent="."]
+[node name="RestartButton" type="Button" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = -50.0
+text = "إعادة"
+[node name="MenuButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = -50.0
+text = "القائمة"
+[node name="WinPanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = 100.0
+[node name="Message" type="Label" parent="UI/WinPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 22
+text = "ما صدقتش الأسهم!
+ذكي شوية 😏"
+horizontal_alignment = 1
+vertical_alignment = 1
+[node name="LosePanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -80.0
+offset_right = 160.0
+offset_bottom = 80.0
+[node name="Message" type="Label" parent="UI/LosePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 20
+text = "صدقت الأسهم؟ 🤡"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/levels/Level01.tscn
+################################################################################
+
+[gd_scene load_steps=5 format=3 uid="uid://level01"]
+
+[ext_resource type="Script" path="res://scripts/LevelBase.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(200, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_goal"]
+size = Vector2(48, 64)
+
+[node name="Level01" type="Node2D"]
+script = ExtResource("1_level")
+level_number = 1
+level_name = "البداية الخادعة"
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -500.0
+offset_top = -300.0
+offset_right = 1500.0
+offset_bottom = 1000.0
+color = Color(0.12, 0.14, 0.2, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(80, 400)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="StartPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(100, 480)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/StartPlatform"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/StartPlatform"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="Platform2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(320, 420)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Platform2"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="Platform3" type="StaticBody2D" parent="Platforms"]
+position = Vector2(550, 360)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform3"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Platform3"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="Goal" type="Area2D" parent="." groups=["real_goal"]]
+position = Vector2(750, 300)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goal"]
+shape = SubResource("RectangleShape2D_goal")
+
+[node name="ColorRect" type="ColorRect" parent="Goal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.2, 0.8, 0.3, 1)
+
+[node name="Label" type="Label" parent="Goal"]
+offset_left = -40.0
+offset_top = -60.0
+offset_right = 40.0
+offset_bottom = -30.0
+theme_override_font_sizes/font_size = 16
+text = "النهاية؟"
+horizontal_alignment = 1
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="DeathLabel" type="Label" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -40.0
+offset_right = 150.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 28
+text = "مت!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RestartButton" type="Button" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = -50.0
+theme_override_font_sizes/font_size = 20
+text = "إعادة"
+
+[node name="MenuButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = -50.0
+theme_override_font_sizes/font_size = 18
+text = "القائمة"
+
+[node name="WinPanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -120.0
+offset_right = 180.0
+offset_bottom = 120.0
+
+[node name="Message" type="Label" parent="UI/WinPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 26
+text = "كسبت المرحلة! 🎉
+بس الشنب لسه موجود..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LosePanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = 100.0
+
+[node name="Message" type="Label" parent="UI/LosePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 24
+text = "حليقتش الشنب لسه 🥸"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/levels/Level03.tscn
+################################################################################
+
+[gd_scene load_steps=6 format=3 uid="uid://level03"]
+
+[ext_resource type="Script" path="res://scripts/LevelBase.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/traps/FakeGoal.gd" id="3_fake"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(180, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_goal"]
+size = Vector2(48, 64)
+
+[node name="Level03" type="Node2D"]
+script = ExtResource("1_level")
+level_number = 3
+level_name = "باب النهاية الهارب"
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = -200.0
+offset_right = 1600.0
+offset_bottom = 1100.0
+color = Color(0.1, 0.12, 0.18, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(70, 520)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Start" type="StaticBody2D" parent="Platforms"]
+position = Vector2(90, 580)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Start"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Start"]
+offset_left = -90.0
+offset_top = -12.0
+offset_right = 90.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="Mid1" type="StaticBody2D" parent="Platforms"]
+position = Vector2(300, 500)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Mid1"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Mid1"]
+offset_left = -90.0
+offset_top = -12.0
+offset_right = 90.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="Mid2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(520, 420)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Mid2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Mid2"]
+offset_left = -90.0
+offset_top = -12.0
+offset_right = 90.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="EndPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(780, 340)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/EndPlatform"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/EndPlatform"]
+offset_left = -90.0
+offset_top = -12.0
+offset_right = 90.0
+offset_bottom = 12.0
+color = Color(0.35, 0.4, 0.5, 1)
+
+[node name="FakeGoal" type="Area2D" parent="."]
+position = Vector2(780, 280)
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("3_fake")
+behavior = 0
+run_speed = 300.0
+run_distance = 450.0
+fake_message = "مبروك!!! ... لأ 😈"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FakeGoal"]
+shape = SubResource("RectangleShape2D_goal")
+
+[node name="Sprite2D" type="Sprite2D" parent="FakeGoal"]
+
+[node name="ColorRect" type="ColorRect" parent="FakeGoal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.9, 0.75, 0.2, 1)
+
+[node name="Label" type="Label" parent="FakeGoal"]
+offset_left = -60.0
+offset_top = -70.0
+offset_right = 60.0
+offset_bottom = -40.0
+theme_override_font_sizes/font_size = 16
+text = "النهاية 🚪"
+horizontal_alignment = 1
+
+[node name="RealGoal" type="Area2D" parent="." groups=["real_goal"]]
+position = Vector2(1100, 280)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RealGoal"]
+shape = SubResource("RectangleShape2D_goal")
+
+[node name="ColorRect" type="ColorRect" parent="RealGoal"]
+offset_left = -24.0
+offset_top = -32.0
+offset_right = 24.0
+offset_bottom = 32.0
+color = Color(0.2, 0.85, 0.35, 1)
+
+[node name="Label" type="Label" parent="RealGoal"]
+offset_left = -50.0
+offset_top = -60.0
+offset_right = 50.0
+offset_bottom = -30.0
+theme_override_font_sizes/font_size = 14
+text = "النهاية الحقيقية"
+horizontal_alignment = 1
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="RestartButton" type="Button" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = -50.0
+text = "إعادة"
+
+[node name="MenuButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = -50.0
+text = "القائمة"
+
+[node name="WinPanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -130.0
+offset_right = 200.0
+offset_bottom = 130.0
+
+[node name="Message" type="Label" parent="UI/WinPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 24
+text = "كسبت المرحلة التالتة!
+الشنب بدأ يخاف شوية... 😏"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LosePanel" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = 100.0
+
+[node name="Message" type="Label" parent="UI/LosePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 22
+text = "الباب هرب منك 🏃"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+################################################################################
+FILE: ShaveMyMustache/scripts/traps/FallingCeiling.gd
+################################################################################
+
+extends AnimatableBody2D
+class_name FallingCeiling
+
+## سقف شيطاني - بيسقط بسرعة مرعبة
+
+@export var fall_delay: float = 0.12
+@export var fall_speed: float = 750.0
+@export var trigger_height: float = 100.0
+@export var reset_time: float = 2.2
+@export var one_shot: bool = false
+@export var crush_damage: bool = true
+
+var original_pos: Vector2
+var is_falling: bool = false
+var has_fallen: bool = false
+var player: Player = null
+
+@onready var collision: CollisionShape2D = $CollisionShape2D
+@onready var timer: Timer = $Timer
+@onready var color_rect: ColorRect = $ColorRect
+
+func _ready() -> void:
+	original_pos = global_position
+	timer.one_shot = true
+	add_to_group("hazard")
+
+func _physics_process(delta: float) -> void:
+	if has_fallen and one_shot:
+		return
+	
+	player = get_tree().get_first_node_in_group("player") as Player
+	if player == null:
+		return
+	
+	var horizontal_close = abs(player.global_position.x - global_position.x) < 100
+	var under = player.global_position.y > global_position.y and player.global_position.y < global_position.y + trigger_height + 70
+	
+	if horizontal_close and under and not is_falling and not has_fallen:
+		_start_fall()
+	
+	if is_falling:
+		global_position.y += fall_speed * delta
+		# يقتل لو لمس اللاعب وهو نازل
+		if crush_damage and player and global_position.distance_to(player.global_position) < 55:
+			player.die()
+		if global_position.y > original_pos.y + 450:
+			_reset()
+
+func _start_fall() -> void:
+	is_falling = true
+	# تأخير بسيط جدًا عشان اللاعب يحس إنه كان ممكن ينجو
+	await get_tree().create_timer(fall_delay).timeout
+
+func _reset() -> void:
+	is_falling = false
+	has_fallen = true
+	global_position = original_pos
+	if not one_shot:
+		await get_tree().create_timer(reset_time).timeout
+		has_fallen = false
+
+################################################################################
+FILE: ShaveMyMustache/scripts/traps/DisappearingPlatform.gd
+################################################################################
+
+extends AnimatableBody2D
+class_name DisappearingPlatform
+
+## منصة خائنة - تختفي أسرع وأقسى
+
+enum TriggerMode { ON_PLAYER_NEAR, ON_PLAYER_STAND, TIMED }
+
+@export var trigger_mode: TriggerMode = TriggerMode.ON_PLAYER_NEAR
+@export var disappear_delay: float = 0.18   # أسرع بكتير
+@export var reappear_time: float = 2.8
+@export var detection_distance: float = 95.0
+@export var one_shot: bool = false
+@export var fake_safe_time: float = 0.0     # تظهر آمنة شوية بعدين تختفي فجأة
+
+var is_disappeared: bool = false
+var player: Player = null
+var has_triggered: bool = false
+var stood_time: float = 0.0
+
+@onready var collision: CollisionShape2D = $CollisionShape2D
+@onready var sprite: Sprite2D = $Sprite2D
+@onready var timer: Timer = $Timer
+@onready var color_rect: ColorRect = $ColorRect
+
+func _ready() -> void:
+	timer.one_shot = true
+	timer.timeout.connect(_on_timer_timeout)
+	add_to_group("platform")
+
+func _physics_process(delta: float) -> void:
+	if is_disappeared or (has_triggered and one_shot):
+		return
+	
+	player = get_tree().get_first_node_in_group("player") as Player
+	if player == null:
+		return
+	
+	match trigger_mode:
+		TriggerMode.ON_PLAYER_NEAR:
+			var dist = global_position.distance_to(player.global_position)
+			if dist < detection_distance and player.global_position.y < global_position.y + 50:
+				_start_disappear()
+		TriggerMode.ON_PLAYER_STAND:
+			if player.is_on_floor():
+				for i in range(player.get_slide_collision_count()):
+					if player.get_slide_collision(i).get_collider() == self:
+						_start_disappear()
+
+func _start_disappear() -> void:
+	if has_triggered:
+		return
+	has_triggered = true
+	timer.start(disappear_delay)
+
+func _on_timer_timeout() -> void:
+	if not is_disappeared:
+		is_disappeared = true
+		collision.set_deferred("disabled", true)
+		var tween = create_tween()
+		if color_rect:
+			tween.tween_property(color_rect, "modulate:a", 0.0, 0.08)
+		elif sprite:
+			tween.tween_property(sprite, "modulate:a", 0.0, 0.08)
+		
+		if reappear_time > 0:
+			await get_tree().create_timer(reappear_time).timeout
+			_reappear()
+
+func _reappear() -> void:
+	is_disappeared = false
+	collision.set_deferred("disabled", false)
+	var tween = create_tween()
+	if color_rect:
+		tween.tween_property(color_rect, "modulate:a", 1.0, 0.15)
+	elif sprite:
+		tween.tween_property(sprite, "modulate:a", 1.0, 0.15)
+	if not one_shot:
+		has_triggered = false
+
+func player_stood_on() -> void:
+	if trigger_mode == TriggerMode.ON_PLAYER_STAND:
+		_start_disappear()
+
+################################################################################
+FILE: ShaveMyMustache/scripts/traps/MovingCoin.gd
+################################################################################
+
+extends Area2D
+class_name MovingCoin
+
+## عملة تهرب كلما اقترب اللاعب
+
+@export var flee_distance: float = 100.0
+@export var flee_speed: float = 320.0
+@export var max_flee_distance: float = 500.0
+
+var original_pos: Vector2
+var is_fleeing: bool = false
+var player: Player = null
+
+@onready var sprite: Sprite2D = $Sprite2D
+
+func _ready() -> void:
+	original_pos = global_position
+	body_entered.connect(_on_body_entered)
+
+func _physics_process(delta: float) -> void:
+	player = get_tree().get_first_node_in_group("player") as Player
+	if player == null:
+		return
+	
+	var dist = global_position.distance_to(player.global_position)
+	
+	if dist < flee_distance:
+		is_fleeing = true
+		var dir = (global_position - player.global_position).normalized()
+		global_position += dir * flee_speed * delta
+		
+		# Keep within reasonable bounds
+		if global_position.distance_to(original_pos) > max_flee_distance:
+			global_position = original_pos + (global_position - original_pos).normalized() * max_flee_distance
+
+func _on_body_entered(body: Node2D) -> void:
+	if body is Player or body.is_in_group("player"):
+		# Collected! (rare achievement)
+		queue_free()
+		# Later: play collect sound + score
+
+################################################################################
+FILE: ShaveMyMustache/scripts/traps/DelayedJumpZone.gd
+################################################################################
+
+extends Area2D
+class_name DelayedJumpZone
+
+## منطقة تؤخر القفزة بشكل مفاجئ (استفزازي)
+
+@export var delay_amount: float = 0.35
+@export var message: String = "لحظة..."
+
+var player_inside: Player = null
+var jump_blocked: bool = false
+
+@onready var label: Label = $Label
+
+func _ready() -> void:
+	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
+	if label:
+		label.visible = false
+		label.text = message
+
+func _on_body_entered(body: Node2D) -> void:
+	if body is Player:
+		player_inside = body as Player
+		# Temporarily reduce jump responsiveness by increasing buffer requirement
+		# We simulate delay by briefly disabling jump input processing
+		_apply_delay()
+
+func _on_body_exited(body: Node2D) -> void:
+	if body is Player:
+		player_inside = null
+		jump_blocked = false
+		if label:
+			label.visible = false
+
+func _apply_delay() -> void:
+	if player_inside == null:
+		return
+	jump_blocked = true
+	if label:
+		label.visible = true
+	
+	# Brief freeze of jump ability
+	var original_can_move = player_inside.can_move
+	# We don't fully freeze, just make the next jump lag
+	await get_tree().create_timer(delay_amount).timeout
+	
+	if label:
+		label.visible = false
+	jump_blocked = false
+
+################################################################################
+FILE: ShaveMyMustache/scripts/traps/FakeGoal.gd
+################################################################################
+
+extends Area2D
+class_name FakeGoal
+
+## باب نهاية شيطاني - بيهرب أسرع وبأشكال أوحش
+
+enum FakeBehavior { RUN_AWAY, DISAPPEAR, TURN_INTO_HAZARD, FAKE_WIN_MESSAGE, TELEPORT }
+
+@export var behavior: FakeBehavior = FakeBehavior.RUN_AWAY
+@export var run_speed: float = 420.0
+@export var run_distance: float = 550.0
+@export var fake_message: String = "مبروك!!! 🎉 ... لأ 😈"
+@export var teleport_offset: Vector2 = Vector2(300, -80)
+
+var has_triggered: bool = false
+var original_pos: Vector2
+var player: Player = null
+
+@onready var sprite: Sprite2D = $Sprite2D
+@onready var label: Label = $Label
+@onready var color_rect: ColorRect = $ColorRect
+
+func _ready() -> void:
+	original_pos = global_position
+	body_entered.connect(_on_body_entered)
+	if label:
+		label.visible = false
+		label.text = fake_message
+
+func _on_body_entered(body: Node2D) -> void:
+	if has_triggered:
+		return
+	if body is Player or body.is_in_group("player"):
+		has_triggered = true
+		player = body as Player
+		_activate_trap()
+
+func _activate_trap() -> void:
+	match behavior:
+		FakeBehavior.RUN_AWAY:
+			_run_away()
+		FakeBehavior.DISAPPEAR:
+			_disappear()
+		FakeBehavior.TURN_INTO_HAZARD:
+			_turn_hazard()
+		FakeBehavior.FAKE_WIN_MESSAGE:
+			_show_fake_message()
+		FakeBehavior.TELEPORT:
+			_teleport()
+
+func _run_away() -> void:
+	var dir = 1.0 if player and player.global_position.x < global_position.x else -1.0
+	# أحيانًا يطير لفوق كمان
+	var up = -60.0 if randf() > 0.4 else 0.0
+	var target = global_position + Vector2(dir * run_distance, up)
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.tween_property(self, "global_position", target, 0.55)
+
+func _disappear() -> void:
+	var tween = create_tween()
+	if color_rect:
+		tween.tween_property(color_rect, "modulate:a", 0.0, 0.15)
+	tween.tween_callback(queue_free)
+
+func _turn_hazard() -> void:
+	if color_rect:
+		color_rect.color = Color(1.0, 0.15, 0.15)
+	add_to_group("hazard")
+	# يقتل فورًا
+	if player:
+		player.die()
+
+func _show_fake_message() -> void:
+	if label:
+		label.visible = true
+		label.text = fake_message
+	await get_tree().create_timer(0.9).timeout
+	if label:
+		label.visible = false
+	_run_away()
+
+func _teleport() -> void:
+	var tween = create_tween()
+	if color_rect:
+		tween.tween_property(color_rect, "modulate:a", 0.0, 0.1)
+	await tween.finished
+	global_position = original_pos + teleport_offset
+	if color_rect:
+		var t2 = create_tween()
+		t2.tween_property(color_rect, "modulate:a", 1.0, 0.15)
+	has_triggered = false  # يقدر يخدع تاني
+
+################################################################################
+FILE: ShaveMyMustache/scripts/traps/FakeArrow.gd
+################################################################################
+
+extends Node2D
+class_name FakeArrow
+
+## سهم إرشادي يعطي اتجاه خاطئ
+
+@export var wrong_direction: Vector2 = Vector2.RIGHT
+@export var blink_speed: float = 1.5
+@export var message: String = "← الطريق من هنا"
+
+@onready var label: Label = $Label
+@onready var arrow_label: Label = $ArrowLabel
+
+var time: float = 0.0
+
+func _ready() -> void:
+	if label:
+		label.text = message
+	if arrow_label:
+		# Point the wrong way intentionally
+		if wrong_direction.x > 0:
+			arrow_label.text = "→→→"
+		elif wrong_direction.x < 0:
+			arrow_label.text = "←←←"
+		elif wrong_direction.y < 0:
+			arrow_label.text = "↑↑↑"
+		else:
+			arrow_label.text = "↓↓↓"
+
+func _process(delta: float) -> void:
+	time += delta * blink_speed
+	var alpha = 0.55 + 0.45 * sin(time * TAU)
+	modulate.a = alpha
+
+################################################################################
+FILE: ShaveMyMustache/scripts/traps/GravityZone.gd
+################################################################################
+
+extends Area2D
+class_name GravityZone
+
+@export var gravity_multiplier: float = -0.7
+@export var affect_player_only: bool = true
+
+var players_inside: Array[Player] = []
+
+func _ready() -> void:
+    body_entered.connect(_on_body_entered)
+    body_exited.connect(_on_body_exited)
+    var rect := get_node_or_null("ColorRect") as ColorRect
+    if rect:
+        rect.color = Color(0.4, 0.2, 0.7, 0.25)
+
+func _on_body_entered(body: Node2D) -> void:
+    if body is Player:
+        var player := body as Player
+        if not players_inside.has(player):
+            players_inside.append(player)
+        player.set_gravity_multiplier(gravity_multiplier)
+
+func _on_body_exited(body: Node2D) -> void:
+    if body is Player:
+        var player := body as Player
+        players_inside.erase(player)
+        player.set_gravity_multiplier(1.0)
